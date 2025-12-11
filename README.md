@@ -1,4 +1,4 @@
-#E-Com Dimensional Modelling & ETL (Oracle → Snowflake)
+# E-Com Dimensional Modelling & ETL (Oracle → Snowflake)
 
 A concise README for the E-Commerce dimensional modelling project, ETL mapping (IDMC), and helpful SQL snippets — ready to drop into your Git repo.
 
