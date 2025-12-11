@@ -1,27 +1,41 @@
-# E-Com Dimensional Modelling & ETL (Oracle → Snowflake)
+# 📦 E-Commerce Dimensional Modelling & ETL (Oracle → Snowflake)
 
-A concise README for the E-Commerce dimensional modelling project, ETL mapping (IDMC), and helpful SQL snippets — ready to drop into your Git repo.
+A concise and production-ready README for the end-to-end **E-Commerce Data Warehouse** project, covering:
 
-Source: original project spec and table definitions. 
+- Oracle (OLTP) source system
+- Snowflake (OLAP) dimensional model
+- Informatica IDMC ETL mappings
+- Example analytical SQL queries
+- Load scheduling & performance notes
 
-a4f43cc0-3c7b-41b1-9506-6b78ff8…
+---
 
-Project overview
+## 🚀 Project Overview
 
 This repository contains:
 
-Oracle (OLTP) source table DDLs and sample data model.
+- **Oracle OLTP source table DDLs** and sample data models  
+- **Snowflake star-schema DDLs** (Dimensions + Fact tables)  
+- **ETL Mapping Documentation (IDMC)** to move data from Oracle → Snowflake  
+- **Analytical SQL Queries** (department counts, aisle insights, top spending users, cart analysis)  
+- **Scheduling guidance** for daily or incremental data loads  
 
-Snowflake (OLAP) dimensional model DDLs (dimension and fact tables).
+---
 
-IDMC mapping / ingestion notes to move data from Oracle → Snowflake.
+## 🗄️ Dimensional Model (Snowflake)
 
-Example analysis queries: department product counts, top aisles, cart averages, top users.
+### ⭐ Dimensions
+- `DIM_PRODUCTS`
+- `DIM_DEPARTMENTS`
+- `DIM_AISLES`
+- `DIM_ORDERS`
 
-Scheduling recommendations for daily loads.
+### 📊 Fact Table
+- `FACT_ORDER_PRODUCTS` (contains grain: *one row per product per order*)
 
-IDMC (Informatica / Intelligent Data Management Cloud) mapping — high level
-## 📌 Informatica IDMC Integration
+---
+
+## 🔄 Informatica IDMC (ETL) Integration
 
 ### Mapping 1 – Oracle → Snowflake (Dimension Tables)
 ![Dimension Mapping](images/mapping_dim.png)
@@ -29,49 +43,38 @@ IDMC (Informatica / Intelligent Data Management Cloud) mapping — high level
 ### Mapping 2 – Oracle → Snowflake (Fact Table)
 ![Fact Mapping](images/mapping_fact.png)
 
+---
 
-Steps to create mapping from Oracle → Snowflake:
+## 🛠️ Steps for Creating Oracle → Snowflake Mappings
 
-Source connection: Configure Oracle connection (wallet/tnsnames/jdbc).
+### 1️⃣ Source Connection (Oracle)
+Configure Oracle connection:
 
-Target connection: Configure Snowflake connection (account, user, role, warehouse, database, schema).
+- JDBC / Wallet / TNS
+- Host, Port
+- Service name  
+- User authentication
 
-Create mappings:
+### 2️⃣ Target Connection (Snowflake)
+Snowflake connection requires:
 
-orders → dim_orders (map columns directly; consider SCD Type 2 if orders attributes change)
+- Account URL  
+- User + Role  
+- Warehouse  
+- Database & Schema  
 
-products → dim_products
+---
 
-aisles → dim_aisles
+## 🔧 Mapping Logic
 
-departments → dim_departments
+### **Dimension Loads**
+| Oracle Source | Snowflake Target | Notes |
+|--------------|------------------|-------|
+| `orders`     | `dim_orders`     | Map directly; use SCD Type 2 if order attributes change |
+| `products`   | `dim_products`   | Clean string fields, cast datatypes |
+| `aisles`     | `dim_aisles`     | Natural key preserved |
+| `departments`| `dim_departments`| No transformation required |
 
-order_products + lookups to products,orders → fact_order_products (populate department_id, aisle_id from product lookup)
+---
 
-Transformations:
-
-Cast datatypes appropriately (Oracle NUMBER → Snowflake NUMBER/INTEGER, VARCHAR2 → STRING).
-
-Convert reordered numeric to boolean.
-
-Compute order_number string if needed.
-
-Key handling:
-
-Preserve natural keys (e.g., order_id, product_id, user_id).
-
-Optionally generate surrogate keys in Snowflake if your analytics require them.
-
-Performance:
-
-Use bulk load (STAGE + COPY INTO) where possible for large tables.
-
-Partition incremental loads by last_modified or use CDC if available.
-
-Job scheduling:
-
-Create a daily schedule in IDMC (once per day). Add incremental filter WHERE <op_ts> >= :last_run_time for incremental loads.
-
-Monitoring & Alerts:
-
-Configure success/failure email alerts and logging to Snowflake or cloud logging (CloudWatch/Stackdriver).
+### **Fact Load**
