@@ -37,10 +37,11 @@ This repository contains:
 
 ## 🔄 Informatica IDMC (ETL) Integration
 
-### Mapping 1 – Oracle → Snowflake (Dimension Tables)
-![Dimension Mapping](images/mapping_dim.png)
 
 ### Mapping 2 – Oracle → Snowflake (Fact Table)
+![Dimension Mapping](images/mapping_dim.png)
+
+### Mapping 1 – Oracle → Snowflake (Dimension Tables)
 ![Fact Mapping](images/mapping_fact.png)
 
 ---
