@@ -21,6 +21,14 @@ Example analysis queries: department product counts, top aisles, cart averages, 
 Scheduling recommendations for daily loads.
 
 IDMC (Informatica / Intelligent Data Management Cloud) mapping — high level
+## 📌 Informatica IDMC Integration
+
+### Mapping 1 – Oracle → Snowflake (Dimension Tables)
+![Dimension Mapping](images/mapping_dim.png)
+
+### Mapping 2 – Oracle → Snowflake (Fact Table)
+![Fact Mapping](images/mapping_fact.png)
+
 
 Steps to create mapping from Oracle → Snowflake:
 
