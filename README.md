@@ -1,4 +1,24 @@
-# ecomm_project
+#E-Com Dimensional Modelling & ETL (Oracle → Snowflake)
+
+A concise README for the E-Commerce dimensional modelling project, ETL mapping (IDMC), and helpful SQL snippets — ready to drop into your Git repo.
+
+Source: original project spec and table definitions. 
+
+a4f43cc0-3c7b-41b1-9506-6b78ff8…
+
+Project overview
+
+This repository contains:
+
+Oracle (OLTP) source table DDLs and sample data model.
+
+Snowflake (OLAP) dimensional model DDLs (dimension and fact tables).
+
+IDMC mapping / ingestion notes to move data from Oracle → Snowflake.
+
+Example analysis queries: department product counts, top aisles, cart averages, top users.
+
+Scheduling recommendations for daily loads.
 
 IDMC (Informatica / Intelligent Data Management Cloud) mapping — high level
 
