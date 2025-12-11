@@ -1,0 +1,96 @@
+use schema de.de25;
+
+ -- dim_users table
+create or replace table dim_users (
+    user_id number primary key comment 'Unique identifier for a department'
+);
+
+select count(*) from dim_users;
+
+
+-- dim_products table
+create or replace table dim_products (
+    product_id    number primary key comment 'Unique identifier for a product', 
+    product_name  varchar(300) comment 'Name of the product'
+);
+
+select count(*) from dim_products;
+
+
+-- dim_aisles table
+create or replace table dim_aisles (
+    aisle_id number primary key comment 'Unique identifier for an aisle', 
+    aisle    varchar(100)             
+);
+
+select count(*) from dim_aisles;
+-- dim_departments table
+create or replace table dim_departments (
+    department_id number primary key comment 'Unique identifier for a department', 
+    department    varchar(100)   comment 'Name of the department'           
+);
+
+select count(*) from 
+
+
+-- dim_orders table
+create or replace table dim_orders (
+    order_id               number primary key comment 'Unique identifier for a department', 
+    order_number          number comment 'A counter for the orders of a user',
+    order_dow               number comment 'The day of the week the order was placed',
+    order_hour_of_day       number comment 'The hour of the day the order was placed',
+    days_since_prior_order  number comment 'Number of days since the previous order'
+
+);
+
+select count(*) from dim_orders;
+
+
+--------fact_order_products:
+create or replace table fact_order_products (
+    order_id          number,
+    product_id        number,
+    user_id           number,
+    department_id     number,
+    aisle_id          number,    
+    add_to_cart_order number,
+    reordered         number
+);
+
+
+--Referencial Integrity
+
+-- foreign key: link to dim_orders
+alter table fact_order_products
+add constraint fk_fop_order
+foreign key (order_id)
+references dim_orders (order_id)
+on delete cascade;
+
+-- foreign key: link to dim_products
+alter table fact_order_products
+add constraint fk_fop_product
+foreign key (product_id)
+references dim_products (product_id)
+on delete cascade;
+
+-- foreign key: link to dim_users
+alter table fact_order_products
+add constraint fk_fop_user
+foreign key (user_id)
+references dim_users (user_id)
+on delete cascade;
+
+-- foreign key: link to dim_departments
+alter table fact_order_products
+add constraint fk_fop_department
+foreign key (department_id)
+references dim_departments (department_id)
+on delete cascade;
+
+-- foreign key: link to dim_aisles
+alter table fact_order_products
+add constraint fk_fop_aisle
+foreign key (aisle_id)
+references dim_aisles (aisle_id)
+on delete cascade;

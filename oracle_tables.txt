@@ -1,0 +1,100 @@
+--E-COM PROJECT
+
+--CREATE BELOW TABLE IN ORACLE:
+
+--1.ORDERS TABLE:
+   CREATE TABLE ORDERS(
+                    ORDER_ID NUMBER PRIMARY KEY, --UNIQUE IDENTIFIER FOR AN ORDER
+                    USER_ID NUMBER, --UNIQUE IDENTIFIER FOR A USER
+                    ORDER_NUMBER NUMBER, --A COUNTER FOR THE ORDERS OF A USER
+                    ORDER_DOW NUMBER, --THE DAY OF THE WEEK THE ORDER WAS PLACED  (0=Sunday to 6=Saturday)
+                    ORDER_HOUR_OF_DAY NUMBER, --THE HOUR OF THE DAY ORDER WAS PLACED (0 to 23)
+                    DAYS_SINCE_PRIOR_ORDER NUMBER --NUMBER OF DAYS SINCE THE PREVIOUE ORDER
+                    );
+                    
+    select distinct count(user_id) from dim.ORDERS;  
+    
+                   
+                    
+COMMENT ON COLUMN orders.order_id IS 'Unique identifier for an order';
+COMMENT ON COLUMN orders.user_id  IS 'Unique identifier for a user';
+COMMENT ON COLUMN orders.order_number IS 'A counter for the orders of a user';
+COMMENT ON COLUMN orders.order_dow IS 'The day of the week the order was placed' ;
+COMMENT ON COLUMN orders.order_hour_of_day IS 'The hour of the day the order was placed' ;
+COMMENT ON COLUMN orders.days_since_prior_order IS 'Number of days since the previous order' ;
+
+SELECT column_name, comments
+FROM user_col_comments
+WHERE table_name = 'ORDER';                    
+                    
+--2.PRODUCTS TABLE:
+   CREATE TABLE PRODUCTS(
+                    PRODUCT_ID  NUMBER PRIMARY KEY, --UNIQUE IDENTIFIER FOR A PRODUCT
+                    PRODUCT_NAME VARCHAR2(300), --NAME OF THE PRODUCT
+                    AISLE_ID NUMBER, --UNIQUE IDENTIFIER FOR AN AISLE (FK to Aisles_Table)
+                    DEPARTMENT_ID NUMBER --UNIQUE IDENTIFIER FOR A DEPARTMENT (FK to Departments_Table)
+                    );
+                    
+     select count(*) from dim.products;
+     
+-- Link PRODUCTS to AISELS (Dimension)
+alter table products
+add constraint fk_p_aisle
+foreign key (aisle_id)
+references aisels (aisle_id);
+
+-- Link PRODUCTS to DEPARTMENTS (Dimension)
+alter table products
+add constraint fk_p_department
+foreign key (department_id)
+references departments(department_id);
+                                
+  
+                    
+--3.ORDER PRODUCT TABLE:
+    CREATE TABLE order_products(
+                    order_id number, -- Unique identifier for an order (FK to Orders_Table)
+                    product_id number, -- Unique identifier for a product (FK to Products_Table)
+                    add_to_cart_order number, -- The order in which the product was added to the cart
+                    reordered number(1)check(reordered in(1,0) )  -- Has the product been ordered by this user in the past? (Use '1' for True, '0' for False)
+                    );
+                    
+      select * from order_products;
+      
+-- Define the Composite Primary Key for ORDER_PRODUCTS
+ALTER TABLE ORDER_PRODUCTS
+ADD CONSTRAINT PK_ORDER_PRODUCTS
+PRIMARY KEY (ORDER_ID, PRODUCT_ID);
+
+-- Link ORDER_PRODUCTS to ORDERS (Fact/Transaction)
+
+alter table order_products
+add constraint fk_op_order
+foreign key (order_id)
+references orders(order_id);
+
+-- Link ORDER_PRODUCTS to PRODUCTS (Dimension)
+
+alter table order_products
+add constraint fk_op_product
+foreign key (product_id)
+references products(product_id);
+                    
+                    
+--4.AISELS TABLE:
+    CREATE TABLE aisels(
+                  aisle_id number primary key,  -- Unique identifier for an aisle
+                  aisle varchar2(100) -- Name of the aisle
+                  );
+   
+   select * from aisels;              
+
+--5.DEPARTMENTS TABLE:
+      CREATE TABLE departments(
+                      department_id number primary key, -- Unique identifier for a department
+                      department varchar(100) -- Name of the department
+                      );
+                      
+      select * from departments;                
+                  
+  commit;
